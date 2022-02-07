@@ -80,20 +80,13 @@ def return_table_as_list():
             for thing2 in thing1:
                 almost_sorted.append(thing2) # Gives back a list like: ['LEUMI', 'LUMI', 'IL0006046119', '3,355', '0.96%', '143,922.44', 'EoD', '3,323', '3,366']
         sorted_list = almost_sorted[:-3]
-        # print("BEFORE CHANGE:")
-        # print(split_table_rows, "\n")
-        # print("AFTER CHANGE 1:")
-        # print(remove_slash_n, "\n")
-        # print("AFTER CHANGE 2:")
-        # print(some_what_sorted_list, "\n")
-        # print("AFTER CHANGE 3:")
-        # print(almost_sorted, "\n")
-        # print("AFTER CHANGE 4:")
-        # print(sorted_list, "\n")
-        # print(href)
+        if 'DL' in sorted_list:
+            sorted_list.remove('DL') # In case there is a 'DL' inside the list, it removes it
+        if 'MM' in sorted_list:
+            sorted_list.remove('MM') # In case there is a 'MM' inside the list, it removes it
+
         list_of_classes.append(Index(sorted_list, href))
-        for thing in list_of_classes:
-            print(thing.__repr__())
+
     print("Outside 'return_table_as_list' function...\n")
 
 
