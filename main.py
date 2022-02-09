@@ -11,10 +11,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 from index import Index
 
 ################################################################################################
-path = r"C:/Users/פבליק/Desktop/SeleniumDrivers/ChromeDriver"
 
 ######################################################## FUNCTIONS ############################################################
 def setup():
+    path = str(input("Please provide me with a path to your chrome driver:\n"))
     global driver
     os.environ['PATH'] += path
     driver = webdriver.Chrome()
@@ -67,7 +67,7 @@ def click_on_turn_over_down():
 
 
 def write_table_to_a_file():
-    print("Inside 'return_table_as_list' function...\n")
+    print("Inside 'write_table_to_a_file' function...\n")
     count = 0
     list_of_table_webelements = driver.find_elements(By.XPATH, "//*[@id=\"mainContent\"]/index-lobby/index-composition/index"
                                                      "-market-data/gridview-lib/div/div[2]/div/div/div["
@@ -75,14 +75,14 @@ def write_table_to_a_file():
 
     next_button = WebDriverWait(driver, 8).until(expected_conditions.presence_of_element_located((By.XPATH, "//*[@id=\"pageS\"]/pagination-template/ul/li[8]/a")))
 
-    # text_from_web_element_sorted(list_of_table_webelements)
+    text_from_web_element_sorted(list_of_table_webelements)
 
-    while count < 4:
-        time.sleep(3)
-        text_from_web_element_sorted(list_of_table_webelements)
-        next_button.click()
-        count += 1
-    print("Outside 'return_table_as_list' function...\n")
+    # while count < 4:
+        # time.sleep(3)
+        # text_from_web_element_sorted(list_of_table_webelements)
+        # next_button.click()
+        # count += 1
+    print("Outside 'write_table_to_a_file' function...\n")
 
 
 def text_from_web_element_sorted(list_of_table_webelements):
@@ -113,23 +113,42 @@ def text_from_web_element_sorted(list_of_table_webelements):
 
 def get_into_share_link_and_take_screenshot():
     print("Inside 'get_into_share_link' function...\n")
-    user_share = str(input("Please enter the symbol for your share. For example: LEUMI --> LUMI\n")).upper()
-    href_link = ""
-    string_from_text = ""
-    date = datetime.datetime.now()
-    today_date = date.strftime("%d") + " " + date.strftime("%b") + " " + date.strftime("%Y")  # Gives back a date like: 07 Dec 2022
-    file = open("shares_detail " + today_date + ".txt", "r")
-    for line in file:
-        if user_share in line:
-            string_from_text = line.split(" ")
-            href_link = string_from_text[-2]  # Takes the link from the line
-            break
-
-    # print(href_link)
-    driver.execute_script("window.open('');")
-    driver.switch_to.window(driver.window_handles[1])
-    driver.get(str(href_link))
-    driver.save_screenshot("share_image " + today_date + ".png")
+    user_selection = int(input(
+        "Please select from the following:\n(1) Enter the symbol for the company you would like to see.\n(2) Exit\n"))
+    if user_selection == 1:
+        while True:
+            user_share = str(input("Please enter the symbol for your company share. For example: LEUMI --> LUMI\n")).upper()
+            href_link = ""
+            string_from_text = ""
+            date = datetime.datetime.now()
+            today_date = date.strftime("%d") + " " + date.strftime("%b") + " " + date.strftime("%Y")  # Gives back a date like: 07 Dec 2022
+            file = open("shares_detail " + today_date + ".txt", "r")
+            share_found = False
+            for line in file:
+                if user_share in line:
+                    string_from_text = line.split(" ")
+                    href_link = string_from_text[-2]  # Takes the link from the line
+                    share_found = True
+                    break
+            if share_found:
+                driver.execute_script("window.open('');")  # Opens a new tab in driver
+                driver.switch_to.window(driver.window_handles[1])  # Switches to the new tab
+                driver.get(str(href_link))
+                driver.save_screenshot("share_image " + today_date + ".png")
+            if not share_found:
+                print("The symbol you have entered is wrong..")
+                print("Please enter again.")
+                continue
+            to_continue = str(input("Would you like to enter another company symbol? (y/n):\n"))
+            if to_continue == "n":
+                break
+            elif to_continue == "y":
+                continue
+            else:
+                print("Not a valid input..")
+                break
+    elif user_selection != 2:
+        print("Not a valid input..")
     print("Outside 'get_into_share_link' function...\n")
 
 ############################################################################################################################
